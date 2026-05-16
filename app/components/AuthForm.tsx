@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -11,6 +12,8 @@ import {
 import { Input } from "@/components/ui/input"
 
 const AuthForm = (props: any) => {
+  const [isRegister, setIsRegister] = React.useState(false);
+
   return (
     <div className={"flex flex-col gap-6"} {...props}>
       <Card className="overflow-hidden p-0">
@@ -18,9 +21,9 @@ const AuthForm = (props: any) => {
           <form className="p-6 md:p-8">
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Welcome back</h1>
+                <h1 className="text-2xl font-bold">{isRegister ? "Welcome" : "Welcome Back"}</h1>
                 <p className="text-balance text-muted-foreground">
-                  Login to your Acme Inc account
+                  {isRegister ? "Sign Up for" : "Login to"} your Wiki Binge account
                 </p>
               </div>
               <Field>
@@ -45,7 +48,7 @@ const AuthForm = (props: any) => {
                 <Input id="password" type="password" required />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit">{isRegister ? "Sign Up" : "Login"}</Button>
               </Field>
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with
@@ -80,7 +83,7 @@ const AuthForm = (props: any) => {
                 </Button>
               </Field>
               <FieldDescription className="text-center">
-                Don&apos;t have an account? <a href="#">Sign up</a>
+                Don&apos;t have an account? <Button onClick={() => setIsRegister(!isRegister)} variant={"link"}>Sign up</Button>
               </FieldDescription>
             </FieldGroup>
           </form>
