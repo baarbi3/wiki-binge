@@ -58,7 +58,7 @@ const AuthForm = (props: any) => {
                 ) : (<></>)
               }
               <Field>
-              <Button type="submit">{isRegister ? "Sign Up" : "Login"}</Button>
+              <Button type="submit">{isRegister ? "Register Now!" : "Login"}</Button>
               </Field>
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with
@@ -93,7 +93,7 @@ const AuthForm = (props: any) => {
                 </Button>
               </Field>
               <FieldDescription className="text-center">
-                Don&apos;t have an account? <Button onClick={() => setIsRegister(!isRegister)} variant={"link"}>Sign up</Button>
+                {isRegister ? "Don't have an account?" : "Already have an account?" } <Button onClick={() => setIsRegister(!isRegister)} variant={"link"}>{isRegister ? "Sign up" : "Login"}</Button>
               </FieldDescription>
             </FieldGroup>
           </form>
