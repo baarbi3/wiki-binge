@@ -47,8 +47,18 @@ const AuthForm = (props: any) => {
                 </div>
                 <Input id="password" type="password" required />
               </Field>
+              {
+                isRegister ? (
               <Field>
-                <Button type="submit">{isRegister ? "Sign Up" : "Login"}</Button>
+                <div className="flex items-center">
+                  <FieldLabel htmlFor="password">Username</FieldLabel>
+                </div>
+                <Input id="username" placeholder="Barbaros" type="username" required />
+              </Field>
+                ) : (<></>)
+              }
+              <Field>
+              <Button type="submit">{isRegister ? "Sign Up" : "Login"}</Button>
               </Field>
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with
