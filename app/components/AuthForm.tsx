@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -10,16 +10,62 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { useAuth } from '../context/AuthContext';
+
+export type AuthFormState = {
+  email: string,
+  username?: string,
+  password: string,
+  register: boolean,
+};
+
 
 const AuthForm = (props: any) => {
-  const [isRegister, setIsRegister] = React.useState(false);
+  const {login, signup, currentUser} = useAuth();
+  const [isRegister, setIsRegister] = useState(false);
+  const [form, setForm] = useState<AuthFormState>({
+    email: "",
+    username: "",
+    password: "",
+    register: false
+  })
+//  const { email, password, username, register } = form
+  const [authenticating, setAuthenticating] = useState<boolean>(false)
+
+
+
+  async function handleSubmit({email, password, register, username} : AuthFormState) {
+    if (!email || !password || (register && !username) || password.length < 6) {
+      return
+    }
+    
+    setAuthenticating(true)
+    try {
+      if (register) {
+        console.log('Signing up a new user')
+        if (!username) return
+        await signup(email, password, username)
+      } else {
+        console.log('Logging in existing user')
+        await login(email, password)
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log(err.message)
+      } else {
+        console.log(String(err))
+      }
+    } finally {
+      setAuthenticating(false)
+    }
+  }
 
   return (
     <div className={"flex flex-col gap-6"} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8">
-            <FieldGroup>
+          <form className="p-6 md:p-8" onSubmit={() => handleSubmit({email: "ayan.whiz@gmail.com", password: "password1234@", username: "barbaors", register: true})}>
+            <FieldGroup> 
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">{isRegister ? "Welcome" : "Welcome Back"}</h1>
                 <p className="text-balance text-muted-foreground">
@@ -58,7 +104,7 @@ const AuthForm = (props: any) => {
                 ) : (<></>)
               }
               <Field>
-              <Button type="submit">{isRegister ? "Register Now!" : "Login"}</Button>
+              <Button type="submit" >{isRegister ? "Register Now!" : "Login"}</Button>
               </Field>
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with

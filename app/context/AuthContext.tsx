@@ -1,5 +1,12 @@
 'use client'
-import React, { createContext, useContext, useEffect, useState } from "react";
+
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "../utils/supabase/client";
 
@@ -15,149 +22,313 @@ export type AuthContextType = {
   currentUser: User | null;
   userDataObj: UserData | null;
   loading: boolean;
-  signup: (email: string, password: string, username: string) => Promise<void>;
-  login: (email: string, password: string) => Promise<void>;
+
+  signup: (
+    email: string,
+    password: string,
+    username: string
+  ) => Promise<void>;
+
+  login: (
+    email: string,
+    password: string
+  ) => Promise<void>;
+
   logout: () => Promise<void>;
-  setUserDataObj: React.Dispatch<React.SetStateAction<UserData | null>>;
-  update: (username: string, profile_img: string) => Promise<void>;
+
+  update: (
+    username?: string,
+    profile_img?: string
+  ) => Promise<void>;
+
+  setUserDataObj:
+    React.Dispatch<React.SetStateAction<UserData | null>>;
+
+  isVerified: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within an AuthProvider");
+
+  if (!ctx) {
+    throw new Error(
+      "useAuth must be used within an AuthProvider"
+    );
+  }
+
   return ctx;
 }
 
 export const supabase = createClient();
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [userDataObj, setUserDataObj] = useState<UserData | null>(null);
+
+export function AuthProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [currentUser, setCurrentUser] =
+    useState<User | null>(null);
+
+  const [userDataObj, setUserDataObj] =
+    useState<UserData | null>(null);
+
   const [loading, setLoading] = useState(true);
 
-  // --- Signup ---
-  async function signup(email: string, password: string, username: string) {
-    setLoading(true);
+  // ---------------------------------------
+  // Fetch Profile
+  // ---------------------------------------
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { username } },
-    });
+  async function fetchProfile(userId: string) {
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", userId)
+      .single<UserData>();
 
     if (error) {
-      console.error("Signup error:", error);
-      setLoading(false);
+      console.error("Error fetching profile:", error);
       return;
     }
 
-    const user = data.user;
-
-    if (!user) {
-      console.warn("Signup pending email verification. No user object returned.");
-      setLoading(false);
-      return;
-    }
-
-    // Inserting data into DB
-/*
-    const { error: insertError } = await supabase
-      .from("users")
-      .insert([{ id: user.id, email: user.email, username }]);
-
-    if (insertError){
-       console.error("Error inserting user:", insertError)
-       setLoading(false);
-       return;
-    };
-*/
-    setCurrentUser(user);
-    setLoading(false);
+    setUserDataObj(data);
   }
 
-  // --- Login ---
-  async function login(email: string, password: string) {
+  // ---------------------------------------
+  // Signup
+  // ---------------------------------------
+
+  async function signup(
+    email: string,
+    password: string,
+    username: string
+  ) {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {console.error("Login error:", error); setLoading(false); return;};
-    setLoading(false);
+
+    try {
+      const { data, error } =
+        await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              username,
+            },
+          },
+        });
+
+      if (error) {
+        console.error("Signup error:", error);
+        return;
+      }
+
+      const user = data.user;
+
+      // Email confirmation enabled:
+      // user may exist but session may not.
+      if (!user) {
+        console.warn("No user returned.");
+        return;
+      }
+
+      // ---------------------------------------
+      // Insert profile row
+      // ---------------------------------------
+
+      const { error: insertError } = await supabase
+        .from("users")
+        .insert([
+          {
+            id: user.id,
+            email: user.email,
+            username,
+            profile_img: "",
+          },
+        ]);
+
+      if (insertError) {
+        console.error(
+          "Error inserting profile:",
+          insertError
+        );
+
+        return;
+      }
+
+      setCurrentUser(user);
+
+      // If user is immediately authenticated
+      if (data.session) {
+        await fetchProfile(user.id);
+      }
+
+    } finally {
+      setLoading(false);
+    }
   }
 
-  // --- Update ---
-async function update(username?: string, profile?: string) {
-  if (!userDataObj?.id) {
-    throw new Error("User ID missing");
+  // ---------------------------------------
+  // Login
+  // ---------------------------------------
+
+  async function login(
+    email: string,
+    password: string
+  ) {
+    setLoading(true);
+
+    try {
+      const { error } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+      if (error) {
+        console.error("Login error:", error);
+      }
+
+    } finally {
+      setLoading(false);
+    }
   }
-  console.log(profile)
 
-  const { data, error } = await supabase
-    .from('users')
-    .update({ username, profile_img: profile })
-    .eq('id', userDataObj.id)
-    .select();
+  // ---------------------------------------
+  // Update Profile
+  // ---------------------------------------
 
-  if (error) {
-    console.error("Update Profile Error", error);
-    return;
+  async function update(
+    username?: string,
+    profile_img?: string
+  ) {
+    if (!userDataObj?.id) {
+      throw new Error("User ID missing");
+    }
+
+    const updates: Partial<UserData> = {};
+
+    if (username !== undefined) {
+      updates.username = username;
+    }
+
+    if (profile_img !== undefined) {
+      updates.profile_img = profile_img;
+    }
+
+    const { data, error } = await supabase
+      .from("users")
+      .update(updates)
+      .eq("id", userDataObj.id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error(
+        "Update Profile Error:",
+        error
+      );
+
+      return;
+    }
+
+    setUserDataObj(data);
   }
 
-  console.log("Updated row:", data);
-}
+  // ---------------------------------------
+  // Logout
+  // ---------------------------------------
 
-  // --- Logout ---
   async function logout() {
     await supabase.auth.signOut();
-    setUserDataObj(null);
+
     setCurrentUser(null);
+    setUserDataObj(null);
   }
 
-  // --- Auth State Listener ---
+  // ---------------------------------------
+  // Init + Auth Listener
+  // ---------------------------------------
+
   useEffect(() => {
-    let unsubscribe: (() => void) | undefined;
+    let mounted = true;
 
-    async function init() {
-      const { data } = supabase.auth.onAuthStateChange(async (_event, session) => {
-        setCurrentUser(session?.user ?? null);
-        setLoading(false);
+    async function initialize() {
+      setLoading(true);
 
-        if (!session?.user) {
-          setUserDataObj(null);
-          return;
+      // Initial session fetch
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!mounted) return;
+
+      const user = session?.user ?? null;
+
+      setCurrentUser(user);
+
+      if (user) {
+        await fetchProfile(user.id);
+      }
+
+      setLoading(false);
+
+      // Auth listener
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange(
+        async (_event, session) => {
+          const user = session?.user ?? null;
+
+          setCurrentUser(user);
+
+          if (!user) {
+            setUserDataObj(null);
+            return;
+          }
+
+          await fetchProfile(user.id);
         }
+      );
 
-        const { data: profile, error } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", session.user.id)
-          .single<UserData>();
-
-        if (error) {
-          console.error("Error fetching user data:", error);
-          return;
-        }
-
-        setUserDataObj(profile);
-      });
-
-      unsubscribe = data.subscription.unsubscribe;
+      return subscription;
     }
-    init();
+
+    let subscription:
+      | Awaited<ReturnType<typeof initialize>>
+      | undefined;
+
+    initialize().then((sub) => {
+      subscription = sub;
+    });
 
     return () => {
-      if (unsubscribe) unsubscribe();
+      mounted = false;
+
+      subscription?.unsubscribe();
     };
   }, []);
+
+  // ---------------------------------------
+  // Derived Verification State
+  // ---------------------------------------
+
+  const isVerified =
+    !!currentUser?.email_confirmed_at;
 
   const value: AuthContextType = {
     currentUser,
     userDataObj,
     loading,
+
     signup,
     login,
     logout,
+    update,
+
     setUserDataObj,
-    update
+
+    isVerified,
   };
 
   return (
