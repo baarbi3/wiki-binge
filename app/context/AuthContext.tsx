@@ -107,61 +107,19 @@ export function AuthProvider({
     setLoading(true);
 
     try {
-      const { data, error } =
-        await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              username,
-            },
-          },
-        });
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { username }, // trigger reads this via raw_user_meta_data
+        },
+      });
 
-      if (error) {
-        console.error("Signup error:", error);
-        return;
-      }
+      // Let the caller handle and display the error
+      if (error) throw error;
 
-      const user = data.user;
-
-      // Email confirmation enabled:
-      // user may exist but session may not.
-      if (!user) {
-        console.warn("No user returned.");
-        return;
-      }
-
-      // ---------------------------------------
-      // Insert profile row
-      // ---------------------------------------
-
-      const { error: insertError } = await supabase
-        .from("users")
-        .insert([
-          {
-            id: user.id,
-            email: user.email,
-            username,
-            profile_img: "",
-          },
-        ]);
-
-      if (insertError) {
-        console.error(
-          "Error inserting profile:",
-          insertError
-        );
-
-        return;
-      }
-
-      setCurrentUser(user);
-
-      // If user is immediately authenticated
-      if (data.session) {
-        await fetchProfile(user.id);
-      }
+      // Profile row is now created automatically by the
+      // DB trigger — nothing else to do here.
 
     } finally {
       setLoading(false);
@@ -185,9 +143,7 @@ export function AuthProvider({
           password,
         });
 
-      if (error) {
-        console.error("Login error:", error);
-      }
+      if (error) throw error;
 
     } finally {
       setLoading(false);
@@ -223,14 +179,7 @@ export function AuthProvider({
       .select()
       .single();
 
-    if (error) {
-      console.error(
-        "Update Profile Error:",
-        error
-      );
-
-      return;
-    }
+    if (error) throw error;
 
     setUserDataObj(data);
   }
@@ -240,7 +189,9 @@ export function AuthProvider({
   // ---------------------------------------
 
   async function logout() {
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+
+    if (error) throw error;
 
     setCurrentUser(null);
     setUserDataObj(null);
@@ -251,89 +202,71 @@ export function AuthProvider({
   // ---------------------------------------
 
   useEffect(() => {
-    let mounted = true;
+    // Register the listener FIRST (synchronously) so no
+    // auth events are missed while getSession() is in flight.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
+        const user = session?.user ?? null;
 
-    async function initialize() {
-      setLoading(true);
+        setCurrentUser(user);
 
-      // Initial session fetch
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+        if (!user) {
+          setUserDataObj(null);
+          return;
+        }
 
-      if (!mounted) return;
-
-      const user = session?.user ?? null;
-
-      setCurrentUser(user);
-
-      if (user) {
         await fetchProfile(user.id);
       }
+    );
 
-      setLoading(false);
+    // Then resolve the initial session
+    supabase.auth.getSession().then(
+      ({ data: { session } }) => {
+        const user = session?.user ?? null;
 
-      // Auth listener
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange(
-        async (_event, session) => {
-          const user = session?.user ?? null;
+        setCurrentUser(user);
 
-          setCurrentUser(user);
-
-          if (!user) {
-            setUserDataObj(null);
-            return;
-          }
-
-          await fetchProfile(user.id);
+        if (user) {
+          fetchProfile(user.id).finally(() =>
+            setLoading(false)
+          );
+        } else {
+          setLoading(false);
         }
-      );
+      }
+    );
 
-      return subscription;
-    }
-
-    let subscription:
-      | Awaited<ReturnType<typeof initialize>>
-      | undefined;
-
-    initialize().then((sub) => {
-      subscription = sub;
-    });
-
-    return () => {
-      mounted = false;
-
-      subscription?.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   // ---------------------------------------
   // Derived Verification State
   // ---------------------------------------
 
-  const isVerified =
-    !!currentUser?.email_confirmed_at;
+  const isVerified = !!currentUser?.email_confirmed_at;
 
   const value: AuthContextType = {
     currentUser,
     userDataObj,
     loading,
-
     signup,
     login,
     logout,
     update,
-
     setUserDataObj,
-
     isVerified,
   };
 
+  // Render a blank screen (or swap in a spinner) while the
+  // initial session check is in flight so children never
+  // see a half-initialised auth state.
+  if (loading) return null;
+
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }
