@@ -86,11 +86,11 @@ const AppSidebar = () => {
             </SidebarGroupContent>
           </SidebarGroup>
         ))}
-
-        {user && <NavUser user={user} />}
       </SidebarContent>
 
-      <SidebarFooter />
+      <SidebarFooter>
+        {user && <NavUser user={user} />}
+      </SidebarFooter>
     </Sidebar>
   )
 }
