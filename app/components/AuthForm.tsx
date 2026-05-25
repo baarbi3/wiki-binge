@@ -27,7 +27,7 @@ const AuthForm = ({
   const { email, password, username, register } = form
 
   return (
-    <form className="p-6 md:p-8">
+    <form className="p-6 md:p-8" onSubmit={onSubmit}>
       <FieldGroup> 
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-bold">{register ? "Welcome" : "Welcome Back"}</h1>
@@ -41,6 +41,8 @@ const AuthForm = ({
             id="email"
             type="email"
             placeholder="m@example.com"
+            onChange={(e) => {setForm(f => ({ ...f, email: e.target.value }))}} 
+            value={email}
             required
           />
         </Field>
@@ -54,7 +56,7 @@ const AuthForm = ({
               Forgot your password?
             </a>
           </div>
-          <Input id="password" type="password" required />
+          <Input id="password" type="password" onChange={(e) => {setForm(f => ({ ...f, password: e.target.value }))}} value={password}  required />
         </Field>
         {
           register ? (
@@ -62,7 +64,7 @@ const AuthForm = ({
           <div className="flex items-center">
             <FieldLabel htmlFor="password">Username</FieldLabel>
           </div>
-          <Input id="username" placeholder="Barbaros" type="username" required />
+          <Input id="username" placeholder="Barbaros" type="username" onChange={(e) => {setForm(f => ({ ...f, username: e.target.value }))}} value={username} required />
         </Field>
           ) : (<></>)
         }
@@ -102,7 +104,7 @@ const AuthForm = ({
           </Button>
         </Field>
         <FieldDescription className="text-center">
-          {register ? "Don't have an account?" : "Already have an account?" } <Button onClick={() => setForm(f => ({ ...f, register: !register }))} variant={"link"}>{register ? "Sign up" : "Login"}</Button>
+          {register ? "Already have an account?" : "Don't have an account?" } <Button onClick={() => setForm(f => ({ ...f, register: !register }))} variant={"link"}>{register ? "Login" : "Sign up"}</Button>
         </FieldDescription>
       </FieldGroup>
     </form>
