@@ -1,0 +1,19 @@
+"use client"
+
+import { redirect } from "next/navigation";
+import AppSidebar from "../components/AppSidebar";
+import { useAuth } from "../context/AuthContext";
+
+const AppPage = () => {
+  const {currentUser} = useAuth();
+  
+  if (!currentUser) {
+    redirect("/auth")
+  }
+
+  return (
+    <AppSidebar/>
+  )
+}
+
+export default AppPage
