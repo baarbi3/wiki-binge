@@ -12,7 +12,7 @@ const AppPage = () => {
   }
 
   return (
-    <AppSidebar/>
+    <></>
   )
 }
 
