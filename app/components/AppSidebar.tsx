@@ -22,6 +22,7 @@ import {
 import { NavUser } from "./SidebarUser"
 import { useAuth } from "../context/AuthContext"
 import { User } from '../types/auth/user';
+import Link from 'next/link';
 
 
 type Data = {
@@ -40,8 +41,8 @@ const data: Data = {
       icon: <Home />,
     },
     {
-      title: "Personalization",
-      url: "#",
+      title: "Personality",
+      url: "app/personality",
       icon: <Palette />,
     },
     {
@@ -78,9 +79,12 @@ const AppSidebar = () => {
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuButton>
-                    {item.icon}
-                    <span>{item.title}</span>
+                  <SidebarMenuButton asChild>
+                    <Link href={item.url}>
+                      {item.icon}
+                      <span>{item.title}</span>
+
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>

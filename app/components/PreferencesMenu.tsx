@@ -1,20 +1,25 @@
 "use client"
 import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemSeparator, ItemTitle } from '@/components/ui/item';
 import { Toggle } from '@/components/ui/toggle';
-import { BookIcon, BriefcaseBusiness, CheckCheckIcon, CheckIcon, ComputerIcon, Home, MusicIcon, PaintBucketIcon, SportShoeIcon, TreePineIcon } from 'lucide-react';
+import { AtomIcon, BookIcon, BrainIcon, CheckIcon, Church, Cpu, Earth, Hourglass, PaintBucketIcon, PersonStanding, PiSquareIcon, Scale, SportShoe, Users } from 'lucide-react';
 import React, { useState } from 'react'
 const PreferencesMenu = () => {
   const [selected, setSelected] = useState<string[]>([])
 
   const interests = [
-    { name: 'Technology', icon: ComputerIcon },
-    { name: 'Business', icon: BriefcaseBusiness },
-    { name: 'Sports', icon: SportShoeIcon },
-    { name: 'Art', icon: PaintBucketIcon },
-    { name: 'Music', icon: MusicIcon },
-    { name: 'Nature', icon: TreePineIcon },
-    { name: 'Reading', icon: BookIcon },
-    { name: 'Design', icon: PaintBucketIcon },
+    { name: 'General Reference', icon: BookIcon },
+    { name: 'Culture and the Arts', icon: PaintBucketIcon },
+    { name: 'Geography and places', icon: Earth },
+    { name: 'Health and Fitness', icon: SportShoe },
+    { name: 'History and Events', icon: Hourglass },
+    { name: 'Human Activities', icon: PersonStanding },
+    { name: 'Mathematics and Logic', icon: PiSquareIcon },
+    { name: 'Natural and Physical Sciences', icon: AtomIcon },
+    { name: 'People and Self', icon: BrainIcon },
+    { name: 'Philosophy and Thinking', icon: Scale },
+    { name: 'Religion and Belief Systems', icon: Church },
+    { name: 'Society and Social Sciences', icon: Users },
+    { name: 'Technology and Applied Sciences', icon: Cpu },
   ]
 
   const toggleInterest = (name: string) => {
