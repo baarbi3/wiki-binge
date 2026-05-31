@@ -7,7 +7,8 @@ const PersonalityButton = () => {
   return (
     <div>
       <Button variant="outline">
-        {loading ? <> <ArrowRight/></> : <> <LoaderCircle className="animate-spin" /></>}
+        {loading ? <> <LoaderCircle className="animate-spin" /></> : <> <ArrowRight/></>}
+        Submit
       </Button>
     </div>
   )

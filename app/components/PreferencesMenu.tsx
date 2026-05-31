@@ -3,6 +3,7 @@ import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemSeparat
 import { Toggle } from '@/components/ui/toggle';
 import { AtomIcon, BookIcon, BrainIcon, CheckIcon, Church, Cpu, Earth, Hourglass, PaintBucketIcon, PersonStanding, PiSquareIcon, Scale, SportShoe, Users } from 'lucide-react';
 import React, { useState } from 'react'
+import PersonalityButton from './PersonalityButton';
 const PreferencesMenu = () => {
   const [selected, setSelected] = useState<string[]>([])
 
@@ -63,6 +64,7 @@ const PreferencesMenu = () => {
             )
           })}
         </div>
+        <PersonalityButton/>
 
         {/* Counter and Help Text */}
         <div className="flex items-center justify-between">
