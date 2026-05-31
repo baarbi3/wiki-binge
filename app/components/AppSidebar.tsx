@@ -37,7 +37,7 @@ const data: Data = {
   navMain: [
     {
       title: "Feed",
-      url: "#",
+      url: "/app",
       icon: <Home />,
     },
     {

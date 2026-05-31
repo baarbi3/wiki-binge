@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "./context/AuthContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 const alexandria = Alexandria({
   subsets: ['latin'],
@@ -33,6 +34,7 @@ export default function RootLayout({
             {children}
           </TooltipProvider>
         </AuthProvider>
+        <Toaster/>
       </body>
     </html>
   );
