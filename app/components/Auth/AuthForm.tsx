@@ -9,7 +9,7 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { AuthFormState } from './AuthMenu';
+import { AuthFormState } from '../Auth/AuthMenu';
 
 type propsType = {
   form: AuthFormState

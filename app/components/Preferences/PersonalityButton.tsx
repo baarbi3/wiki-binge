@@ -3,10 +3,10 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight, LoaderCircle } from 'lucide-react';
 import React, { useState } from 'react'
-import { supabase, useAuth } from '../context/AuthContext';
+import { supabase, useAuth } from '../../context/AuthContext';
 import { toast } from 'sonner';
 import { redirect } from 'next/navigation';
-import { delay } from '../utils/helpers/delay';
+import { delay } from '../../utils/helpers/delay';
 
 interface propsType {
   selectedItems: number[]

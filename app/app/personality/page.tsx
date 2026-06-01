@@ -1,4 +1,4 @@
-import PreferencesMenu from '@/app/components/PreferencesMenu';
+import PreferencesMenu from '@/app/components/Preferences/PreferencesMenu';
 import React from 'react'
 
 const PersonalityPage = () => {

@@ -19,7 +19,7 @@ import {
   Users
 } from 'lucide-react'
 
-import PersonalityButton from './PersonalityButton'
+import PersonalityButton from '../Preferences/PersonalityButton'
 
 const PreferencesMenu = () => {
   const [selected, setSelected] = useState<number[]>([])
