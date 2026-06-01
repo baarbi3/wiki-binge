@@ -20,8 +20,8 @@ import {
 } from "lucide-react"
 
 import { NavUser } from "./SidebarUser"
-import { useAuth } from "../context/AuthContext"
-import { User } from '../types/auth/user';
+import { useAuth } from "../../context/AuthContext"
+import { User } from '../../types/auth/user';
 import Link from 'next/link';
 
 
