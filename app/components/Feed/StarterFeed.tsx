@@ -1,16 +1,19 @@
 import { supabase, useAuth } from '@/app/context/AuthContext';
 import React, { useEffect, useState } from 'react'
+import FeedCarousel from './FeedCarousel';
+import { itemType } from '@/app/types/feed/items';
 
 interface propsType {
-  
+  callFetchSummary: (titles: string[]) => void;
+  results: any,
+  loading: boolean,
+  error: string | null
 }
 
 const StarterFeed = (props: propsType) => {
+  const { callFetchSummary, results } = props;
   const { currentUser, userDataObj } = useAuth();
   const [titles, setTitles] = useState<string[]>([]);
-  const [results, setResults] = useState<any | null>(null); // Please write a WikiResult Type later
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   if (!currentUser) {
     return null
@@ -19,6 +22,7 @@ const StarterFeed = (props: propsType) => {
   useEffect(() => {
     async function load() {
       const userId = userDataObj?.id;
+
       if (!userId) return;
 
       const { data, error } = await supabase
@@ -30,27 +34,34 @@ const StarterFeed = (props: propsType) => {
 
       const interestIds = data?.map(row => row.interest_id) ?? [];
 
-      const allTitles: string[] = [];
+      const { data: articles, error: articleError } = await supabase
+        .from('articles')
+        .select('title')
+        .in('category_hint_interest_id', interestIds);
 
-      for (const id of interestIds) {
-        const { data: articles, error } = await supabase
-          .from('articles')
-          .select('title')
-          .eq('category_hint_interest_id', id);
+      if (articleError) return;
 
-        if (!error && articles) {
-          allTitles.push(...articles.map(a => a.title));
-        }
-      }
-
-      setTitles(allTitles);
+      setTitles(articles?.map(a => a.title) ?? []);
     }
 
     load();
   }, [userDataObj?.id]);
 
+  useEffect(() => {
+    if (titles.length > 0) {
+      callFetchSummary(titles);
+    }
+  }, [titles, callFetchSummary]);
+
+  useEffect(() => {
+    if (!results) return;
+
+    console.log(results);
+  }, [results]);
+
   return (
-    <div>StarterFeed</div>
+    <div>
+    </div>
   )
 4}
 

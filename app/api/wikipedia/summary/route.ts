@@ -1,22 +1,28 @@
-export async function GET(req: Request) {
-const { searchParams } = new URL(req.url);
-const title = searchParams.get("title");
+import { NextResponse } from "next/server";
 
-  if (!title) {
-    return Response.json({ error: "Missing query" }, { status: 400 });
-  }
+export async function POST(req: Request) {
+  const { titles } = await req.json();
 
-  const url =
-    `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
-
-  const res = await fetch(url);
-  if (!res.ok) {
-    return Response.json(
-      { error: "Page not found or Wikipedia error" },
-      { status: res.status }
+  if (!Array.isArray(titles)) {
+    return NextResponse.json(
+      { error: "titles must be an array" },
+      { status: 400 }
     );
   }
-  const data = await res.json();
 
-  return Response.json(data);
+  const results = await Promise.all(
+    titles.map(async (title: string) => {
+      const res = await fetch(
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`
+      );
+
+      if (!res.ok) return null;
+
+      return res.json();
+    })
+  );
+
+  return NextResponse.json(
+    results.filter(Boolean)
+  );
 }
