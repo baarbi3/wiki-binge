@@ -23,6 +23,11 @@ export async function POST(req: Request) {
   );
 
   return NextResponse.json(
-    results.filter(Boolean)
-  );
-}
+    results.filter(Boolean).map((item: any) => ({
+      title: item.title,
+      description: item.description ?? "",
+      extract: item.extract_html ?? "",
+      url: item.content_urls?.desktop?.page ?? "",
+  }))
+
+);}
