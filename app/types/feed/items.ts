@@ -1,4 +1,6 @@
 export interface itemType {
-  summary: string,
-  id: number,
+  extract: string,
+  description: string,
+  title: string,
+  url: string,
 }

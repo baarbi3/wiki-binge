@@ -13,7 +13,7 @@ const AppPage = () => {
   }
 
   return (
-    <Feed/>
+    <div className="w-full"><Feed/></div>
   )
 }
 

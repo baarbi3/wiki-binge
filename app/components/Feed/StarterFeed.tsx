@@ -46,13 +46,13 @@ const StarterFeed = (props: propsType) => {
       const titles = (articles ?? [])
         .map((a: any) => a?.title)
         .filter(Boolean);
-          
+
       // Fisher-Yates shuffle
       for (let i = titles.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [titles[i], titles[j]] = [titles[j], titles[i]];
       }
-      
+
       setTitles(titles);
     }
 
@@ -67,7 +67,8 @@ const StarterFeed = (props: propsType) => {
   }, [results]);
 
   return (
-    <div>
+    <div className="w-full">
+      <FeedCarousel items={results}/>
     </div>
   )
 4}
