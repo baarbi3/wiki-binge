@@ -4,16 +4,18 @@ import FeedCarousel from './FeedCarousel';
 import { itemType } from '@/app/types/feed/items';
 
 interface propsType {
-  callFetchSummary: (titles: string[]) => void;
   results: any,
   loading: boolean,
-  error: string | null
+  error: string | null,
+  loadBatch: () => Promise<void>,
+  nextBatch: () => void,
+  setTitles: React.Dispatch<React.SetStateAction<string[]>>
+  titles: string[]
 }
 
 const StarterFeed = (props: propsType) => {
-  const { callFetchSummary, results } = props;
+  const { setTitles, titles, results, loading, loadBatch, nextBatch } = props;
   const { currentUser, userDataObj } = useAuth();
-  const [titles, setTitles] = useState<string[]>([]);
 
   if (!currentUser) {
     return null
@@ -41,17 +43,22 @@ const StarterFeed = (props: propsType) => {
 
       if (articleError) return;
 
-      setTitles(articles?.map(a => a.title) ?? []);
+      const titles = (articles ?? [])
+        .map((a: any) => a?.title)
+        .filter(Boolean);
+          
+      // Fisher-Yates shuffle
+      for (let i = titles.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [titles[i], titles[j]] = [titles[j], titles[i]];
+      }
+      
+      setTitles(titles);
     }
 
     load();
   }, [userDataObj?.id]);
 
-  useEffect(() => {
-    if (titles.length > 0) {
-      callFetchSummary(titles);
-    }
-  }, [titles, callFetchSummary]);
 
   useEffect(() => {
     if (!results) return;
