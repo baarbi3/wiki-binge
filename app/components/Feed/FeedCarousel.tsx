@@ -1,13 +1,18 @@
 import { itemType } from '@/app/types/feed/items';
-import React, { useRef } from 'react';
-import { ChevronUp, ChevronDown } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { ChevronUp, ChevronDown, HeartIcon, MessageCircle, Clipboard, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Toggle } from '@/components/ui/toggle';
+import { supabase } from '@/app/context/AuthContext';
+import { toast } from 'sonner';
 
 interface propsType {
   items: itemType[];
 }
 
 const FeedCarousel = ({ items }: propsType) => {
+
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   const scrollTo = (direction: 'up' | 'down') => {
@@ -20,6 +25,30 @@ const FeedCarousel = ({ items }: propsType) => {
     });
   };
 
+  const [isLiked, setIsLiked] = useState(false)
+  async function handleLike(title: string) {
+    const { data, error } = await supabase
+      .rpc('increment_likes_by_title', { article_title: title })
+ 
+    console.log(data, error)
+    if (error) {
+      console.error('Error incrementing likes:', error.message)
+      toast("error registering your like")
+    }
+  }
+
+
+  const [copied, setCopied] = useState(false);
+
+  const handleClick = async (url:string) => {
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
+  };
+  
   return (
     <div className="relative w-full h-screen">
       {/* Scrollable snap container */}
@@ -52,6 +81,26 @@ const FeedCarousel = ({ items }: propsType) => {
                 >
                   Read more on Wikipedia →
                 </a>
+                <div className="grid grid-cols-3 gap-2">
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleLike(item.title)}
+                  >
+                    <HeartIcon className={isLiked ? "fill-red-500 stroke-red-500" : ""} />
+                    Like
+                  </Button>
+
+
+
+                  <Button variant="outline" size="sm" onClick={() => handleClick(item.url)}>
+                    {copied ? <Check /> : <Clipboard />}
+                    {copied ? "Copied" : "Share"}
+                  </Button>
+
+                  <Button size="sm"><MessageCircle/> Comment</Button>
+                </div>
               </div>
             </div>
           ))}
@@ -64,7 +113,7 @@ const FeedCarousel = ({ items }: propsType) => {
           size="icon"
           onClick={() => scrollTo('up')}
         >
-          <ChevronUp className="w-5 h-5" />
+        <ChevronUp className="w-5 h-5" />
         </Button>
         <Button
           variant="outline"

@@ -8,8 +8,7 @@ export default function Feed() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [batchIndex, setBatchIndex] = useState(0);
-  const [titles, setTitles] = useState<string[]>([]); // IMPORTANT: source data
-
+  const [titles, setTitles] = useState<{ id: string; title: string }[]>([]);
   // -------------------------
   // utils
   // -------------------------
@@ -30,19 +29,14 @@ export default function Feed() {
   // -------------------------
   // API
   // -------------------------
-  const fetchSummary = useCallback(async (titles: string[]) => {
+  const fetchSummary = useCallback(async (items: { id: string; title: string }[]) => {
     const res = await fetch("/api/wikipedia/summary", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ titles }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items }),
     });
-
-    if (!res.ok) {
-      throw new Error("Request failed");
-    }
-
+  
+    if (!res.ok) throw new Error("Request failed");
     return res.json();
   }, []);
 

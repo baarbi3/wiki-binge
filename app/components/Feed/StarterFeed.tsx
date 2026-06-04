@@ -9,8 +9,8 @@ interface propsType {
   error: string | null,
   loadBatch: () => Promise<void>,
   nextBatch: () => void,
-  setTitles: React.Dispatch<React.SetStateAction<string[]>>
-  titles: string[]
+  titles: { id: string; title: string }[]
+  setTitles: React.Dispatch<React.SetStateAction<{ id: string; title: string }[]>>
 }
 
 const StarterFeed = (props: propsType) => {
@@ -38,22 +38,22 @@ const StarterFeed = (props: propsType) => {
 
       const { data: articles, error: articleError } = await supabase
         .from('articles')
-        .select('title')
+        .select('id, title')
         .in('category_hint_interest_id', interestIds);
 
       if (articleError) return;
 
-      const titles = (articles ?? [])
-        .map((a: any) => a?.title)
-        .filter(Boolean);
+      const titlesWithIds = (articles ?? [])
+        .map((a: any) => a?.title && a?.id ? { id: a.id as string, title: a.title as string } : null)
+        .filter((a): a is { id: string; title: string } => a !== null);
 
-      // Fisher-Yates shuffle
-      for (let i = titles.length - 1; i > 0; i--) {
+      // Fisher-Yates stays the same, just on titlesWithIds
+      for (let i = titlesWithIds.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [titles[i], titles[j]] = [titles[j], titles[i]];
+        [titlesWithIds[i], titlesWithIds[j]] = [titlesWithIds[j], titlesWithIds[i]];
       }
 
-      setTitles(titles);
+      setTitles(titlesWithIds);
     }
 
     load();
@@ -71,6 +71,6 @@ const StarterFeed = (props: propsType) => {
       <FeedCarousel items={results}/>
     </div>
   )
-4}
+}
 
 export default StarterFeed
