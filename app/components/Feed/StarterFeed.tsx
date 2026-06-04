@@ -47,7 +47,7 @@ const StarterFeed = (props: propsType) => {
         .map((a: any) => a?.title && a?.id ? { id: a.id as string, title: a.title as string } : null)
         .filter((a): a is { id: string; title: string } => a !== null);
 
-      // Fisher-Yates stays the same, just on titlesWithIds
+      // Fisher-Yates 
       for (let i = titlesWithIds.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [titlesWithIds[i], titlesWithIds[j]] = [titlesWithIds[j], titlesWithIds[i]];

@@ -12,7 +12,6 @@ interface propsType {
 
 const FeedCarousel = ({ items }: propsType) => {
 
-
   const containerRef = useRef<HTMLDivElement>(null);
 
   const scrollTo = (direction: 'up' | 'down') => {
@@ -25,19 +24,23 @@ const FeedCarousel = ({ items }: propsType) => {
     });
   };
 
-  const [isLiked, setIsLiked] = useState(false)
-  async function handleLike(title: string) {
-    const { data, error } = await supabase
-      .rpc('increment_likes_by_title', { article_title: title })
- 
-    console.log(data, error)
+  const [likedMap, setLikedMap] = useState<Record<number, boolean>>({});
+
+  async function handleLike(articleId: number) {
+    const { error } = await supabase.rpc("like_article", {
+      p_article_id: articleId,
+    });
+
     if (error) {
-      console.error('Error incrementing likes:', error.message)
-      toast("error registering your like")
+      console.error(error);
+      return;
     }
+
+    setLikedMap(prev => ({
+      ...prev,
+      [articleId]: true,
+    }));
   }
-
-
   const [copied, setCopied] = useState(false);
 
   const handleClick = async (url:string) => {
@@ -86,12 +89,13 @@ const FeedCarousel = ({ items }: propsType) => {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => handleLike(item.title)}
+                    onClick={() => handleLike(item.id)}
                   >
-                    <HeartIcon className={isLiked ? "fill-red-500 stroke-red-500" : ""} />
+                    <HeartIcon
+                      className={likedMap[item.id] ? "fill-red-500 stroke-red-500" : ""}
+                    />
                     Like
                   </Button>
-
 
 
                   <Button variant="outline" size="sm" onClick={() => handleClick(item.url)}>

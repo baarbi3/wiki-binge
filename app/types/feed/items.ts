@@ -3,4 +3,5 @@ export interface itemType {
   description: string,
   title: string,
   url: string,
+  id: number
 }
