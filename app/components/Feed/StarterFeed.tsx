@@ -68,7 +68,7 @@ const StarterFeed = (props: propsType) => {
 
   return (
     <div className="w-full">
-      <FeedCarousel items={results}/>
+      <FeedCarousel nextBatch={nextBatch} items={results}/>
     </div>
   )
 }
