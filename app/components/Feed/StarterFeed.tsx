@@ -11,10 +11,11 @@ interface propsType {
   nextBatch: () => void,
   titles: { id: string; title: string }[]
   setTitles: React.Dispatch<React.SetStateAction<{ id: string; title: string }[]>>
+  containerRef: React.RefObject<HTMLDivElement | null>
 }
 
 const StarterFeed = (props: propsType) => {
-  const { setTitles, titles, results, loading, loadBatch, nextBatch } = props;
+  const { setTitles, titles, results, loading, loadBatch, nextBatch, containerRef } = props;
   const { currentUser, userDataObj } = useAuth();
 
   if (!currentUser) {
@@ -67,9 +68,7 @@ const StarterFeed = (props: propsType) => {
   }, [results]);
 
   return (
-    <div className="w-full">
-      <FeedCarousel nextBatch={nextBatch} items={results}/>
-    </div>
+    <FeedCarousel nextBatch={nextBatch} items={results} containerRef={containerRef}/>
   )
 }
 

@@ -1,9 +1,15 @@
 "use client";
 
-import React, { useCallback, useState, useMemo, useEffect } from "react";
+import React, { useCallback, useState, useMemo, useEffect} from "react";
 import StarterFeed from "./StarterFeed";
 
-export default function Feed() {
+interface propsType {
+  containerRef: React.RefObject<HTMLDivElement | null>
+}
+
+export default function Feed(props: propsType) {
+  const {containerRef} = props
+
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -107,6 +113,7 @@ useEffect(() => {
       nextBatch={nextBatch}
       titles={titles}
       setTitles={setTitles}
+      containerRef={containerRef}
     />
   );
 }

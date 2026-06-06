@@ -3,11 +3,22 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import React from 'react'
 
 interface propsType {
-  scrollTo: (direction: 'up' | 'down') => void
+  containerRef: React.RefObject<HTMLDivElement | null>
 }
 
 const NavButtons = (props: propsType) => {
-  const {scrollTo} = props
+  const {containerRef} = props
+
+  const scrollTo = (direction: 'up' | 'down') => {
+    const container = containerRef.current;
+    if (!container) return;
+    const height = container.clientHeight;
+    container.scrollBy({
+      top: direction === 'down' ? height : -height,
+      behavior: 'smooth',
+    });
+  };
+
   return (
       <div className="fixed right-6 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-50 max-md:hidden">
         <Button
