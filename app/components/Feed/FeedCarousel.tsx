@@ -4,6 +4,7 @@ import { ChevronUp, ChevronDown, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import HandleLike from './ItemOptions/HandleLike';
 import HandleShare from './ItemOptions/HandleShare';
+import NavButtons from './NavButtons';
 
 interface propsType {
   items: itemType[];
@@ -24,20 +25,19 @@ const FeedCarousel = (props: propsType) => {
     });
   };
 
-useEffect(() => {
-  const container = containerRef.current;
-  if (!container) return;
-
-  const handleScroll = () => {
-    const { scrollTop, scrollHeight, clientHeight } = container;
-    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
-    if (isAtBottom) nextBatch();
-  };
-
-  container.addEventListener("scroll", handleScroll);
-  return () => container.removeEventListener("scroll", handleScroll);
-}, [nextBatch]);
-
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+  
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
+      if (isAtBottom) nextBatch();
+    };
+  
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [nextBatch]);
   
   return (
     <div className="relative w-full h-screen">
@@ -81,23 +81,7 @@ useEffect(() => {
           ))}
         </div>
       </div>
-      {/* Nav buttons */}
-      <div className="fixed right-6 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-50 max-md:hidden">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => scrollTo('up')}
-        >
-        <ChevronUp className="w-5 h-5 text-card-foreground" />
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => scrollTo('down')}
-        >
-          <ChevronDown className="w-5 h-5 text-card-foreground" />
-        </Button>
-      </div>
+      <NavButtons scrollTo={scrollTo}/>
     </div>
   );
 };
