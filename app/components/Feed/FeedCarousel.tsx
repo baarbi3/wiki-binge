@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
 import { supabase } from '@/app/context/AuthContext';
 import { toast } from 'sonner';
+import HandleLike from './ItemOptions/HandleLike';
+import HandleShare from './ItemOptions/HandleShare';
 
 interface propsType {
   items: itemType[];
@@ -22,34 +24,6 @@ const FeedCarousel = ({ items }: propsType) => {
       top: direction === 'down' ? height : -height,
       behavior: 'smooth',
     });
-  };
-
-  const [likedMap, setLikedMap] = useState<Record<number, boolean>>({});
-
-  async function handleLike(articleId: number) {
-    const { error } = await supabase.rpc("like_article", {
-      p_article_id: articleId,
-    });
-
-    if (error) {
-      console.error(error);
-      return;
-    }
-
-    setLikedMap(prev => ({
-      ...prev,
-      [articleId]: true,
-    }));
-  }
-  const [copied, setCopied] = useState(false);
-
-  const handleClick = async (url:string) => {
-    await navigator.clipboard.writeText(url);
-    setCopied(true);
-
-    setTimeout(() => {
-      setCopied(false);
-    }, 2000);
   };
   
   return (
@@ -85,24 +59,8 @@ const FeedCarousel = ({ items }: propsType) => {
                   Read more on Wikipedia →
                 </a>
                 <div className="grid grid-cols-3 gap-2">
-
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleLike(item.id)}
-                  >
-                    <HeartIcon
-                      className={likedMap[item.id] ? "fill-red-500 stroke-red-500" : ""}
-                    />
-                    Like
-                  </Button>
-
-
-                  <Button variant="outline" size="sm" onClick={() => handleClick(item.url)}>
-                    {copied ? <Check /> : <Clipboard />}
-                    {copied ? "Copied" : "Share"}
-                  </Button>
-
+                  <HandleLike item={item}/>
+                  <HandleShare item={item}/>
                   <Button size="sm"><MessageCircle/> Comment</Button>
                 </div>
               </div>
@@ -117,14 +75,14 @@ const FeedCarousel = ({ items }: propsType) => {
           size="icon"
           onClick={() => scrollTo('up')}
         >
-        <ChevronUp className="w-5 h-5" />
+        <ChevronUp className="w-5 h-5 text-card-foreground" />
         </Button>
         <Button
           variant="outline"
           size="icon"
           onClick={() => scrollTo('down')}
         >
-          <ChevronDown className="w-5 h-5" />
+          <ChevronDown className="w-5 h-5 text-card-foreground" />
         </Button>
       </div>
     </div>
