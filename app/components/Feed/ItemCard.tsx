@@ -5,6 +5,8 @@ import HandleLike from './ItemOptions/HandleLike';
 import HandleShare from './ItemOptions/HandleShare';
 import { Button } from '@/components/ui/button';
 import { MessageCircle } from 'lucide-react';
+import { supabase, useAuth } from '@/app/context/AuthContext';
+import { useLogRead } from '@/app/hooks/useLogRead';
 
 interface propsType{
   item: itemType,
@@ -13,18 +15,20 @@ interface propsType{
 
 const ItemCard = (props: propsType) => {
   const { item, containerRef } = props
+  const {userDataObj} = useAuth();
   const cardRef = useRef<HTMLDivElement>(null);
   const logged = useRef(false);
-
+  const logRead = useLogRead(userDataObj?.id);
+  
   useEffect(() => {
     const el = cardRef.current;
     if (!el) return;
-    console.log(item.title)
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !logged.current) {
           logged.current = true;
           console.log("read:", item.id);
+          logRead(String(item.id));
         }
       },
       { threshold: 0.9, root: containerRef.current }
