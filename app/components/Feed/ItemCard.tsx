@@ -27,7 +27,6 @@ const ItemCard = (props: propsType) => {
       ([entry]) => {
         if (entry.isIntersecting && !logged.current) {
           logged.current = true;
-          console.log("read:", item.id);
           logRead(String(item.id));
         }
       },
