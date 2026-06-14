@@ -10,48 +10,71 @@ interface propsType {
 
 const HandleLike = (props: propsType) => {
   const {item} = props;
-  const [likedMap, setLikedMap] = useState<Record<number, boolean>>({});
   const {userDataObj} = useAuth();
-const [liked, setLiked] = useState(false);
-const [likes, setLikes] = useState(0);
+  const [liked, setLiked] = useState(false);
+  const [likes, setLikes] = useState(0);
 
-useEffect(() => {
-  if (!item.id || !userDataObj?.id) return;
+  // Add three related articles to the database when someone likes one
+  const fetchRelated = async () => {
+    try {
+      const res = await fetch("/api/wikipedia/related", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: item.title,
+          userId: userDataObj?.id,
+        }),
+      });
 
-  async function fetchLikes() {
-    const { data } = await supabase
-      .from("articles")
-      .select("likes")
-      .eq("id", item.id)
-      .single();
+      const data = await res.json();
+      console.log(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-    if (data) setLikes(data.likes);
-  }
+  useEffect(() => {
+    if (!item.id || !userDataObj?.id) return;
 
-  async function checkLiked() {
-    const { data, error } = await supabase
-      .from("article_likes")
-      .select("article_id")
-      .eq("user_id", userDataObj?.id)
-      .eq("article_id", item.id)
-      .maybeSingle();
+    async function fetchLikes() {
+      const { data } = await supabase
+        .from("articles")
+        .select("likes")
+        .eq("id", item.id)
+        .single();
 
-    if (error) {
-      console.error(error);
-      return;
+      if (data) setLikes(data.likes);
     }
 
-    setLiked(!!data);
-  }
+    async function checkLiked() {
+      const { data, error } = await supabase
+        .from("article_likes")
+        .select("article_id")
+        .eq("user_id", userDataObj?.id)
+        .eq("article_id", item.id)
+        .maybeSingle();
 
-  fetchLikes();
-  checkLiked();
-}, [item.id, userDataObj?.id]);
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setLiked(!!data);
+    }
+
+    fetchLikes();
+    checkLiked();
+  }, [item.id, userDataObj?.id]);
 
   async function handleLike(articleId: number) {
     const { error } = await supabase.rpc("like_article", {
       p_article_id: articleId,
     });
+
+    // Call Fetch Related on Like
+    fetchRelated();
 
     if (error) {
       console.error(error);

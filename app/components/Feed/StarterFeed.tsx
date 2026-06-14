@@ -61,12 +61,6 @@ const StarterFeed = (props: propsType) => {
   }, [userDataObj?.id]);
 
 
-  useEffect(() => {
-    if (!results) return;
-
-    console.log(results);
-  }, [results]);
-
   return (
     <FeedCarousel nextBatch={nextBatch} items={results} containerRef={containerRef}/>
   )
