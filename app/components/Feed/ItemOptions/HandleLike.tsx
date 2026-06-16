@@ -15,7 +15,7 @@ const HandleLike = (props: propsType) => {
   const [likes, setLikes] = useState(0);
 
   // Add three related articles to the database when someone likes one
-  const fetchRelated = async () => {
+  const fetchRelated = async (title: string) => {
     try {
       const res = await fetch("/api/wikipedia/related", {
         method: "POST",
@@ -23,15 +23,21 @@ const HandleLike = (props: propsType) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          title: item.title,
+          title: title,
           userId: userDataObj?.id,
         }),
       });
-
+    
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("Related API failed:", res.status, text);
+        return;
+      }
+    
       const data = await res.json();
-      console.log(data);
+      console.log("related:", data);
     } catch (err) {
-      console.error(err);
+      console.error("fetchRelated crashed:", err);
     }
   };
 
@@ -73,9 +79,6 @@ const HandleLike = (props: propsType) => {
       p_article_id: articleId,
     });
 
-    // Call Fetch Related on Like
-    fetchRelated();
-
     if (error) {
       console.error(error);
       return;
@@ -84,6 +87,7 @@ const HandleLike = (props: propsType) => {
     if (!liked) {
       setLiked(true);
       setLikes(prev => prev + 1);
+      fetchRelated(item.title)
     }
   }
 

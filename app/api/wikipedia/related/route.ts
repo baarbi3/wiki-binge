@@ -1,6 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
-
 import { GoogleGenAI } from "@google/genai";
+import { createClient } from "@supabase/supabase-js";
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
@@ -18,13 +17,11 @@ type pageType = {
 }
 
 export async function POST(req: Request) {
-  // ADMIN CLIENT, DON'T FORGET TO CHANGE LATER
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SECRET_KEY!
   );
-
-  const { title } = await req.json();
+  const { title, userId } = await req.json();
 
   const params = new URLSearchParams({
     action: "query",
