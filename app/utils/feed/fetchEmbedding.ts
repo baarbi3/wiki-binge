@@ -24,12 +24,11 @@ export const fetchEmbedding = async(item: itemType) => {
     return data
   } catch (err) {
     console.error("fetchRelated crashed:", err);
-  } 
+  }
 }
 
 // --- Calculate total_likes and embedding_sum of each user ---
-
-export const storeEmbedding = async (userId: string, item: itemType) => {
+export const storeEmbedding = async (userId: string) => {
   const { data: likedArticles, error: likedArticlesError } =
     await supabase
       .from("article_likes")

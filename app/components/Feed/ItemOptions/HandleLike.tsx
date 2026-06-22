@@ -1,7 +1,7 @@
 import { supabase, useAuth } from '@/app/context/AuthContext';
 import { itemType } from '@/app/types/feed/items';
 import { RelatedResponse } from '@/app/types/feed/related';
-import { fetchEmbedding } from '@/app/utils/feed/fetchEmbedding';
+import { fetchEmbedding, storeEmbedding } from '@/app/utils/feed/fetchEmbedding';
 import { fetchRelated } from '@/app/utils/feed/fetchRelated';
 import { Button } from '@/components/ui/button';
 import { HeartIcon } from 'lucide-react';
@@ -64,9 +64,12 @@ const HandleLike = (props: propsType) => {
       setLiked(true);
       setLikes(prev => prev + 1);
       // Get related articles on like
-      fetchRelated(item.title);
+      await fetchRelated(item.title);
       // Make sure you've the AI embedding for this article
-      fetchEmbedding(item);
+      await fetchEmbedding(item);
+
+      if (!userDataObj) return;
+      await storeEmbedding(userDataObj.id);
     }
   }
 
