@@ -1,27 +1,14 @@
-import { GoogleGenAI } from "@google/genai";
 import { createClient } from "@supabase/supabase-js";
-
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY
-});
-
-
-type pageType = {
-  ns: number,
-  title: string,
-  snippet: string,
-  pageid: number,
-  size: number,
-  timestamp: string,
-  wordcount: number,
-}
+import { pageType } from "@/app/types/feed/related"
+import { supabase } from "@/app/context/AuthContext";
+import { ai } from "@/app/utils/ai/ai";
 
 export async function POST(req: Request) {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SECRET_KEY!
   );
-  const { title, userId } = await req.json();
+  const { title} = await req.json();
 
   const params = new URLSearchParams({
     action: "query",
@@ -105,5 +92,14 @@ export async function POST(req: Request) {
     }
   }
 
-  return Response.json({ pages });
+  const { data: articlesWithEmbeddings } = await supabase
+  .from("articles")
+  .select("title, embedding")
+  .in(
+    "title",
+    pages.map((page: pageType) => page.title)
+  );
+
+
+  return Response.json({ pages, embeddings: articlesWithEmbeddings });
 }

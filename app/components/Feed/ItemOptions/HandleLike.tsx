@@ -1,5 +1,8 @@
 import { supabase, useAuth } from '@/app/context/AuthContext';
 import { itemType } from '@/app/types/feed/items';
+import { RelatedResponse } from '@/app/types/feed/related';
+import { fetchEmbedding } from '@/app/utils/feed/fetchEmbedding';
+import { fetchRelated } from '@/app/utils/feed/fetchRelated';
 import { Button } from '@/components/ui/button';
 import { HeartIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
@@ -13,33 +16,6 @@ const HandleLike = (props: propsType) => {
   const {userDataObj} = useAuth();
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(0);
-
-  // Add three related articles to the database when someone likes one
-  const fetchRelated = async (title: string) => {
-    try {
-      const res = await fetch("/api/wikipedia/related", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: title,
-          userId: userDataObj?.id,
-        }),
-      });
-    
-      if (!res.ok) {
-        const text = await res.text();
-        console.error("Related API failed:", res.status, text);
-        return;
-      }
-    
-      const data = await res.json();
-      console.log("related:", data);
-    } catch (err) {
-      console.error("fetchRelated crashed:", err);
-    }
-  };
 
   useEffect(() => {
     if (!item.id || !userDataObj?.id) return;
@@ -87,7 +63,10 @@ const HandleLike = (props: propsType) => {
     if (!liked) {
       setLiked(true);
       setLikes(prev => prev + 1);
-      fetchRelated(item.title)
+      // Get related articles on like
+      fetchRelated(item.title);
+      // Make sure you've the AI embedding for this article
+      fetchEmbedding(item);
     }
   }
 
