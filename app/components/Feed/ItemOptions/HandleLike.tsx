@@ -68,6 +68,7 @@ const HandleLike = (props: propsType) => {
       // Make sure you've the AI embedding for this article
       await fetchEmbedding(item);
 
+      // Calculate the user profile's embedding
       if (!userDataObj) return;
       await storeEmbedding(userDataObj.id);
     }

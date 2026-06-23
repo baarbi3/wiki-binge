@@ -64,7 +64,7 @@ export const storeEmbedding = async (userId: string) => {
     await supabase
       .from("users")
       .update({
-        total_likes: likedArticles.length,
+        like_count: likedArticles.length,
         embedding_sum: totalEmbedding,
       })
       .eq("id", userId);
@@ -73,4 +73,5 @@ export const storeEmbedding = async (userId: string) => {
     console.error(updateTotalError);
     return;
   }
+    
 };

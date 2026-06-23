@@ -16,6 +16,8 @@ export type UserData = {
   email: string;
   username: string;
   profile_img: string;
+  embedding_sum: number[];
+  like_count: number;
 };
 
 export type AuthContextType = {

@@ -3,6 +3,7 @@
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import StarterFeed from "./StarterFeed";
 import { useAuth } from "@/app/context/AuthContext";
+import MainFeed from "./MainFeed";
 
 interface propsType {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -107,6 +108,21 @@ export default function Feed(props: propsType) {
   const nextBatch = useCallback(() => {
     setBatchIndex((i) => i + 1);
   }, []);
+
+  if (userDataObj?.embedding_sum !== null) {
+    return (
+      <MainFeed
+        results={results}
+        loading={loading}
+        error={error}
+        loadBatch={() => loadBatch(batchIndex)}
+        nextBatch={nextBatch}
+        titles={titles}
+        setTitles={setTitles}
+        containerRef={containerRef}
+      />
+    )
+  }
 
   return (
     <StarterFeed
