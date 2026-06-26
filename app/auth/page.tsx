@@ -1,8 +1,8 @@
 "use client"
 import React from 'react'
-import AuthMenu from '../components/AuthMenu';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '@/components/ui/button';
+import AuthMenu from '../components/Auth/AuthMenu';
 
 const AuthPage = () => {
   const { currentUser, userDataObj, logout } = useAuth();

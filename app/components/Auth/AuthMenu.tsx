@@ -10,8 +10,8 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { useAuth } from '../context/AuthContext';
 import AuthForm from './AuthForm';
+import { useAuth } from '@/app/context/AuthContext';
 
 export type AuthFormState = {
   email: string,

@@ -1,85 +1,69 @@
 import { supabase, useAuth } from '@/app/context/AuthContext';
 import React, { useEffect, useState } from 'react'
+import FeedCarousel from './FeedCarousel';
+import { itemType } from '@/app/types/feed/items';
 
+interface propsType {
+  results: any,
+  loading: boolean,
+  error: string | null,
+  loadBatch: () => Promise<void>,
+  nextBatch: () => void,
+  titles: { id: string; title: string }[]
+  setTitles: React.Dispatch<React.SetStateAction<{ id: string; title: string }[]>>
+  containerRef: React.RefObject<HTMLDivElement | null>
+}
 
-const StarterFeed = () => {
+const StarterFeed = (props: propsType) => {
+  const { setTitles, titles, results, loading, loadBatch, nextBatch, containerRef } = props;
   const { currentUser, userDataObj } = useAuth();
-  const [titles, setTitles] = useState<string[]>([]);
-  const [results, setResults] = useState<any | null>(null); // Please write a WikiResult Type later
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   if (!currentUser) {
     return null
-  }
-  
-  async function fetchSummary(title: string) {
-    const res = await fetch(
-      `/api/wikipedia/summary?title=${encodeURIComponent(title)}`
-    );
-
-    if (!res.ok) {
-      throw new Error("Request failed");
-    }
-
-    return res.json();
-  }
-
-  async function callFetchSummary() {
-    if (!titles || titles.length === 0) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const data = await Promise.all(
-        titles.map((t) => fetchSummary(t))
-      );
-
-      setResults(data);
-    } catch (err) {
-      setError("Failed to fetch results");
-    } finally {
-      setLoading(false);
-    }
   }
 
   useEffect(() => {
     async function load() {
       const userId = userDataObj?.id;
+
       if (!userId) return;
-    
+
       const { data, error } = await supabase
         .from('user_interests')
         .select('interest_id')
         .eq('user_id', userId);
-    
+
       if (error) return;
-    
+
       const interestIds = data?.map(row => row.interest_id) ?? [];
-    
-      const allTitles: string[] = [];
-    
-      for (const id of interestIds) {
-        const { data: articles, error } = await supabase
-          .from('articles')
-          .select('title')
-          .eq('category_hint_interest_id', id);
-      
-        if (!error && articles) {
-          allTitles.push(...articles.map(a => a.title));
-        }
+
+      const { data: articles, error: articleError } = await supabase
+        .from('articles')
+        .select('id, title')
+        .in('category_hint_interest_id', interestIds);
+
+      if (articleError) return;
+
+      const titlesWithIds = (articles ?? [])
+        .map((a: any) => a?.title && a?.id ? { id: a.id as string, title: a.title as string } : null)
+        .filter((a): a is { id: string; title: string } => a !== null);
+
+      // Fisher-Yates 
+      for (let i = titlesWithIds.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [titlesWithIds[i], titlesWithIds[j]] = [titlesWithIds[j], titlesWithIds[i]];
       }
-    
-      setTitles(allTitles);
+
+      setTitles(titlesWithIds);
     }
-  
+
     load();
   }, [userDataObj?.id]);
 
+
   return (
-    <div>StarterFeed</div>
+    <FeedCarousel nextBatch={nextBatch} items={results} containerRef={containerRef}/>
   )
-4}
+}
 
 export default StarterFeed

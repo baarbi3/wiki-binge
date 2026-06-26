@@ -9,6 +9,7 @@ import React, {
 
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "../utils/supabase/client";
+import { router } from "next/client";
 
 export type UserData = {
   id: string;
@@ -16,6 +17,8 @@ export type UserData = {
   email: string;
   username: string;
   profile_img: string;
+  embedding_sum: number[];
+  like_count: number;
 };
 
 export type AuthContextType = {
@@ -105,22 +108,19 @@ export function AuthProvider({
     username: string
   ) {
     setLoading(true);
-
+  
     try {
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: { username }, // trigger reads this via raw_user_meta_data
+          data: { username },
         },
       });
-
-      // Let the caller handle and display the error
+    
       if (error) throw error;
-
-      // Profile row is now created automatically by the
-      // DB trigger — nothing else to do here.
-
+    
+      router.push("/app/personality");
     } finally {
       setLoading(false);
     }
