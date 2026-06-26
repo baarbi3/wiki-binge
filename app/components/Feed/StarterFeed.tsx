@@ -2,6 +2,7 @@ import { supabase, useAuth } from '@/app/context/AuthContext';
 import React, { useEffect, useState } from 'react'
 import FeedCarousel from './FeedCarousel';
 import { itemType } from '@/app/types/feed/items';
+import { checkRead } from '@/app/utils/feed/checkRead';
 
 interface propsType {
   results: any,
@@ -54,7 +55,10 @@ const StarterFeed = (props: propsType) => {
         [titlesWithIds[i], titlesWithIds[j]] = [titlesWithIds[j], titlesWithIds[i]];
       }
 
-      setTitles(titlesWithIds);
+      const filteredTitles = await checkRead(titlesWithIds, userDataObj.id);
+
+
+      setTitles(filteredTitles);
     }
 
     load();

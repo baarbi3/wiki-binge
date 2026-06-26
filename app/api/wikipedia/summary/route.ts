@@ -1,4 +1,3 @@
-import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 type Item = {
@@ -11,7 +10,7 @@ function normalizeTitle(title: string) {
 }
 
 export async function POST(req: Request) {
-  const { items = [], userId } = await req.json();
+  const { items = []} = await req.json();
 
   if (!Array.isArray(items)) {
     return NextResponse.json([]);
@@ -32,40 +31,12 @@ export async function POST(req: Request) {
   const dedupedItems = [...uniqueById.values()];
 
   /* -----------------------------
-     2. Fetch read IDs (Supabase)
-  ------------------------------ */
-  let readIds = new Set<string>();
-
-  if (userId) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SECRET_KEY!
-  );
-
-    const { data } = await supabase
-      .from("read_posts")
-      .select("article_id")
-      .eq("user_id", userId);
-
-    readIds = new Set(
-      (data ?? []).map((r: any) => String(r.article_id))
-    );
-  }
-
-  /* -----------------------------
-     3. Filter unread items
-  ------------------------------ */
-  const unreadItems = dedupedItems.filter(
-    (item) => !readIds.has(String(item.id))
-  );
-
-  /* -----------------------------
      4. Deduplicate by normalized title
         (prevents duplicate fetches)
   ------------------------------ */
   const uniqueByTitle = new Map<string, Item>();
 
-  for (const item of unreadItems) {
+  for (const item of dedupedItems) {
     const key = normalizeTitle(item.title);
     if (!uniqueByTitle.has(key)) {
       uniqueByTitle.set(key, item);

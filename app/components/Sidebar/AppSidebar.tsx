@@ -16,6 +16,7 @@ import {
   Earth,
   Home,
   Palette,
+  Search,
   Settings,
 } from "lucide-react"
 
@@ -39,6 +40,11 @@ const data: Data = {
       title: "Feed",
       url: "/app",
       icon: <Home />,
+    },
+    {
+      title: "Search",
+      url: "#",
+      icon: <Search/>,
     },
     {
       title: "Explore",
