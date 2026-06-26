@@ -20,9 +20,20 @@ import {
 } from 'lucide-react'
 
 import PersonalityButton from '../Preferences/PersonalityButton'
+import { useAuth } from '@/app/context/AuthContext';
+import { redirect } from 'next/navigation';
+import { toast } from 'sonner';
+import { delay } from '@/app/utils/helpers/delay';
 
 const PreferencesMenu = () => {
   const [selected, setSelected] = useState<number[]>([])
+  const { userDataObj } = useAuth();
+
+  if (userDataObj?.embedding_sum) {
+    toast("You're already setup!")
+    delay(3000)
+    redirect("/app")
+  }
 
   const interests = [
     { name: 'General Reference', icon: BookIcon, id: 1 },
@@ -94,11 +105,7 @@ const PreferencesMenu = () => {
           <p className="text-sm text-muted-foreground">
             {selected.length} of {interests.length} selected
           </p>
-          <p className="text-xs text-muted-foreground">
-            You can change these anytime in settings
-          </p>
         </div>
-
       </div>
     </div>
   )

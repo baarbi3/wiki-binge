@@ -1,5 +1,6 @@
 import { supabase, useAuth } from '@/app/context/AuthContext';
 import React, { useEffect } from 'react'
+import FeedCarousel from './FeedCarousel';
 
 interface propsType {
   results: any,
@@ -41,14 +42,14 @@ const MainFeed = (props: propsType) => {
         return;
       }
     
-      console.log(articles);
+      setTitles(articles)
     }
 
     load();
   }, [userDataObj.id])
 
   return (
-    <div>MainFeed</div>
+    <FeedCarousel nextBatch={nextBatch} items={results} containerRef={containerRef}/>
   )
 }
 

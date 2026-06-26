@@ -41,11 +41,6 @@ const data: Data = {
       icon: <Home />,
     },
     {
-      title: "Personality",
-      url: "app/personality",
-      icon: <Palette />,
-    },
-    {
       title: "Explore",
       url: "#",
       icon: <Earth />,
