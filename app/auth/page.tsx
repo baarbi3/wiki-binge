@@ -3,19 +3,12 @@ import React from 'react'
 import { useAuth } from '../context/AuthContext';
 import { Button } from '@/components/ui/button';
 import AuthMenu from '../components/Auth/AuthMenu';
+import { redirect } from 'next/navigation';
 
 const AuthPage = () => {
   const { currentUser, userDataObj, logout } = useAuth();
   if (currentUser) {
-    return (
-      <>
-       You're logged in as {userDataObj?.username}
-       <div className='w-full'>
-
-       </div>
-       <Button onClick={() => logout()}>Log Out</Button>
-      </>
-    )
+    redirect("/app/personality")
   }
   return (
     <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">

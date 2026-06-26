@@ -5,3 +5,10 @@ export interface itemType {
   url: string,
   id: number
 }
+
+
+export type titleType = {
+  id: string;
+  title: string;
+};
+

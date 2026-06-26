@@ -15,6 +15,7 @@ export default function Feed(props: propsType) {
   const { userDataObj } = useAuth();
   const { containerRef } = props;
 
+  
   const [results, setResults] = useState<any[]>([]);
   const [titles, setTitles] = useState<{ id: string; title: string }[]>([]);
   const [batchIndex, setBatchIndex] = useState(0);
@@ -45,7 +46,6 @@ export default function Feed(props: propsType) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ items, userId: userDataObj?.id }),
     });
-
     if (!res.ok) throw new Error("Request failed");
     return res.json();
   }, [userDataObj?.id]);
