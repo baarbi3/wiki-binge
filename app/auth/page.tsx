@@ -5,6 +5,10 @@ import { Button } from '@/components/ui/button';
 import AuthMenu from '../components/Auth/AuthMenu';
 import { redirect } from 'next/navigation';
 
+export const metadata = {
+  title: "Wikibinge ⋅ Auth"
+}
+
 const AuthPage = () => {
   const { currentUser, userDataObj, logout } = useAuth();
   if (currentUser) {
