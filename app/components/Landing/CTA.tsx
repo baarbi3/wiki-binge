@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 const CTA = () => {
   return (
@@ -17,8 +18,8 @@ const CTA = () => {
         </div>
 
         <div className="flex justify-center gap-3">
-          <Button className="cursor-pointer">
-            Get Started <ArrowRight className="ml-2 h-4 w-4" />
+          <Button asChild>
+            <Link href="/auth">Get Started <ArrowRight className="ml-2 h-4 w-4" /></Link>
           </Button>
 
           <Button variant="outline">

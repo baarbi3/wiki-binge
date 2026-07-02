@@ -9,7 +9,7 @@ export default function Home() {
     <div>
       <nav className="w-full bg-sidebar text-foreground">
         <div className="flex items-center justify-between p-3">
-          <Link href="/auth" className="font-semibold">
+          <Link href="/app" className="font-semibold">
             WikiBinge
           </Link>
 
