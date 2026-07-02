@@ -10,10 +10,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <>
       <SidebarProvider>
         <AppSidebar/>
-  <SidebarInset>
-    <SidebarTrigger/>
-    {children}
-  </SidebarInset>
+          <SidebarInset>
+            <SidebarTrigger/>
+            {children}
+          </SidebarInset>
       </SidebarProvider>
     </>
   );
