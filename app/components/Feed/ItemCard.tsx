@@ -39,36 +39,42 @@ const ItemCard = (props: propsType) => {
   
   return (
     <div
-      className="h-screen w-full snap-start snap-always flex items-center justify-center p-8"
       ref={cardRef}
+      className="h-screen snap-start snap-always flex items-center justify-center px-3 py-4 sm:p-6 md:p-8 text-foreground"
     >
-      <div className="max-w-2xl w-full rounded-2xl border bg-card p-10 shadow-lg flex flex-col gap-4 text-foreground">
-        <h1 className="text-4xl font-extrabold tracking-tight text-balance">
+      <div className="w-full max-w-2xl rounded-2xl border bg-card p-5 sm:p-8 md:p-10 shadow-lg flex flex-col gap-4">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-balance">
           {item.title}
         </h1>
-
-        <span className="text-sm font-semibold text-muted-foreground">
+      
+        <p className="text-sm font-medium text-muted-foreground">
           {item.description}
-        </span>
-
-        <span className="leading-7 text-base" dangerouslySetInnerHTML={{__html: item.extract}}></span>
-
+        </p>
+      
+        <div
+          className="text-sm sm:text-base leading-7 break-words"
+          dangerouslySetInnerHTML={{ __html: item.extract }}
+        />
+    
         <a
           href={item.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm text-primary underline underline-offset-4 self-start"
+          className="text-sm text-primary underline underline-offset-4"
         >
           Read more on Wikipedia →
         </a>
-        <div className="grid grid-cols-3 gap-2">
-          <HandleLike item={item}/>
-          <HandleShare item={item}/>
-          <Button size="sm"><MessageCircle/> Comment</Button>
+      
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <HandleLike item={item} />
+          <HandleShare item={item} />
+          <Button size="sm">
+            <MessageCircle />
+            Comment
+          </Button>
         </div>
       </div>
     </div>
-
   )
 }
 

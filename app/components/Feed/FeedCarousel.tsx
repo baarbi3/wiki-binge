@@ -1,10 +1,5 @@
 import { itemType } from '@/app/types/feed/items';
 import React, { useEffect, useRef, useState } from 'react';
-import { ChevronUp, ChevronDown, MessageCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import HandleLike from './ItemOptions/HandleLike';
-import HandleShare from './ItemOptions/HandleShare';
-import NavButtons from './NavButtons';
 import ItemCard from './ItemCard';
 
 interface propsType {
@@ -33,9 +28,9 @@ const FeedCarousel = (props: propsType) => {
   return (
     <div
       ref={containerRef}
-      className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide max-w-2xl"
+      className="h-full overflow-y-auto snap-y snap-mandatory scrollbar-hide w-full max-w-2xl mx-auto"
     >
-      {items.map((item) => (
+        {items.map((item) => (
         <ItemCard item={item} containerRef={containerRef} key={item.id}/>
       ))}
     </div>
