@@ -6,6 +6,7 @@ import {
   ChevronsUpDown,
   CreditCard,
   LogOut,
+  Palette,
   Sparkles,
 } from "lucide-react"
 
@@ -32,6 +33,14 @@ import {
 import { User } from "../../types/auth/user";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../../context/AuthContext";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 export function NavUser({
   user,
@@ -43,6 +52,7 @@ user: User
 
   return (
     <SidebarMenu>
+      <Dialog>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -88,9 +98,13 @@ user: User
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
+              <DropdownMenuItem asChild>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Palette />
+                    Edit Profile
+                  </Button>
+                </DialogTrigger>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <CreditCard />
@@ -111,6 +125,7 @@ user: User
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
+      </Dialog>
     </SidebarMenu>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {
   AtomIcon,
@@ -21,19 +21,26 @@ import {
 
 import PersonalityButton from '../Preferences/PersonalityButton'
 import { useAuth } from '@/app/context/AuthContext';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { delay } from '@/app/utils/helpers/delay';
 
 const PreferencesMenu = () => {
   const [selected, setSelected] = useState<number[]>([])
   const { userDataObj } = useAuth();
+  const router = useRouter();
 
-  if (userDataObj?.embedding_sum) {
-    toast("You're already setup!")
-    delay(3000)
-    redirect("/app")
-  }
+  useEffect(() => {
+    if (!userDataObj?.embedding_sum) return;
+  
+    toast("Welcome Back!");
+  
+    const timeout = setTimeout(() => {
+      router.replace("/app");
+    }, 3000);
+  
+    return () => clearTimeout(timeout);
+  }, [userDataObj?.embedding_sum, router]);
 
   const interests = [
     { name: 'General Reference', icon: BookIcon, id: 1 },
