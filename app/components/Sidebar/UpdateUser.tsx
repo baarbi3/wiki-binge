@@ -49,14 +49,6 @@ const UpdateUser = () => {
       </DialogHeader>
 
       <PFPRouter step={step} setStep={setStep} updateForm={updateForm} setUpdateForm={setUpdateForm} onSubmit={() => handleSubmit()} ></PFPRouter>
-{/*
-      <DialogFooter className="my-2">
-        <DialogClose asChild>
-          <Button variant="outline">Cancel</Button>
-        </DialogClose>
-        <Button type="submit">Save changes</Button>
-      </DialogFooter>
-*/}
     </div>
   )
 }

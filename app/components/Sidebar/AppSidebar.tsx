@@ -41,6 +41,7 @@ const data: Data = {
       url: "/app",
       icon: <Home />,
     },
+/*
     {
       title: "Search",
       url: "#",
@@ -56,6 +57,7 @@ const data: Data = {
       url: "#",
       icon: <Settings />,
     },
+*/  
   ],
 }
 

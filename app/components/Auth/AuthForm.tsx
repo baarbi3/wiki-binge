@@ -49,12 +49,14 @@ const AuthForm = ({
         <Field>
           <div className="flex items-center">
             <FieldLabel htmlFor="password">Password</FieldLabel>
+{/* 
             <a
               href="#"
               className="ml-auto text-sm underline-offset-2 hover:underline"
             >
               Forgot your password?
             </a>
+*/}            
           </div>
           <Input id="password" type="password" onChange={(e) => {setForm(f => ({ ...f, password: e.target.value }))}} value={password}  required />
         </Field>
@@ -71,6 +73,7 @@ const AuthForm = ({
         <Field>
         <Button type="submit" >{register ? "Register Now!" : "Login"}</Button>
         </Field>
+{/*         
         <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
           Or continue with
         </FieldSeparator>
@@ -101,8 +104,9 @@ const AuthForm = ({
               />
             </svg>
             <span className="sr-only">Login with Meta</span>
-          </Button>
+          </Button>          
         </Field>
+*/}        
         <FieldDescription className="text-center">
           {register ? "Already have an account?" : "Don't have an account?" } <Button onClick={() => setForm(f => ({ ...f, register: !register }))} variant={"link"}>{register ? "Login" : "Sign up"}</Button>
         </FieldDescription>

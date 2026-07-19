@@ -101,8 +101,8 @@ user: User
                     <Palette />
                     Edit Profile
                   </DropdownMenuItem>
-                </DialogTrigger>
-                
+                </DialogTrigger>       
+{/*
                 <DropdownMenuItem>
                   <CreditCard />
                   Billing
@@ -111,6 +111,7 @@ user: User
                   <Bell />
                   Notifications
                 </DropdownMenuItem>
+*/}
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
