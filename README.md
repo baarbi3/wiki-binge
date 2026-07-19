@@ -17,7 +17,10 @@
   <p align="center">
     A healthier alternative to traditional social media
     <br />
-https://github.com/user-attachments/assets/8d569243-2291-4e4b-a95c-7b3f84807c3c
+    <video src="https://github.com/user-attachments/assets/8d569243-2291-4e4b-a95c-7b3f84807c3c
+" width="100%" controls>
+      Your browser does not support the video tag.
+    </video>
     <br />
     <a href="https://wiki-binge.vercel.app/">View Demo</a>
     &middot;
