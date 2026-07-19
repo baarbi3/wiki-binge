@@ -111,7 +111,6 @@ Follow these steps to set up a local development copy of WikiBinge.
 ```sh
 npm run dev
 ```
-   ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
