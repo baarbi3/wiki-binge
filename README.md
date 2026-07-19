@@ -107,21 +107,6 @@ Follow these steps to set up a local development copy of WikiBinge.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- ROADMAP -->
-## Roadmap
-
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Implement robust user onboarding flow
-- [ ] Add bookmarking features for read-later logs
-- [ ] Multi-language Support
-    - [ ] Spanish
-    - [ ] German
-
-See the [open issues](https://github.com) for a full list of proposed features and known bugs.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 <!-- CONTRIBUTING -->
 ## Contributing
 
