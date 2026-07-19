@@ -1,5 +1,8 @@
 import { UpdateFormState } from '@/app/types/auth/profile';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import React from 'react'
+import { DialogFooter } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 interface ConfirmProps {
   onNext?: () => void,
